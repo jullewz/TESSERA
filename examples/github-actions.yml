@@ -1,0 +1,47 @@
+# Example workflow: verify that release artifacts are unchanged between build and publish.
+# Copy to .github/workflows/ in your own repository and adapt the build step.
+# Store a sealing key (output of `tessera keygen`) in the TESSERA_SEAL_KEY secret.
+name: artifact-integrity
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  security-events: write   # for uploading SARIF
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install git+https://github.com/jullewz/tessera.git
+
+      - name: Write sealing key
+        run: |
+          printf '%s\n' "${{ secrets.TESSERA_SEAL_KEY }}" > "$RUNNER_TEMP/seal.key"
+          chmod 600 "$RUNNER_TEMP/seal.key"
+          echo "TESSERA_KEY_FILE=$RUNNER_TEMP/seal.key" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: python -m pip install build && python -m build
+
+      - name: Seal the build output
+        run: |
+          tessera snapshot -c examples/release-artifacts.toml --require-seal -l "${GITHUB_SHA}"
+          tessera export -c examples/release-artifacts.toml -o dist-manifest.json
+
+      # ... signing, scanning and other steps that touch dist/ ...
+
+      - name: Verify nothing changed
+        run: tessera check -c examples/release-artifacts.toml --strict --fail-on info -f sarif -o tessera.sarif
+
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: tessera.sarif
+          category: tessera

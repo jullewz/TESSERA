@@ -1,0 +1,23 @@
+# Tessera for build pipelines: prove that release artifacts were not altered
+# between build and publish. Run from the repository root:
+#
+#   tessera snapshot -c examples/release-artifacts.toml      (after the build step)
+#   tessera export   -c examples/release-artifacts.toml -o dist-manifest.json
+#   ... upload, sign, scan ...
+#   tessera check    -c examples/release-artifacts.toml -f sarif -o tessera.sarif --fail-on info
+#
+# See examples/github-actions.yml for a complete workflow.
+
+[general]
+store = "./.tessera/artifacts.db"
+key_file = "${TESSERA_KEY_FILE}"
+algorithm = "sha512"
+max_file_size = "4GiB"
+
+[[watch]]
+path = "./dist"
+
+[[rule]]
+pattern = "**"
+profile = "content"     # timestamps and permissions change when files are copied around
+severity = "critical"   # any content change in a release artifact is serious
