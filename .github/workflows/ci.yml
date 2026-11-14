@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pytest
+      - name: Smoke test the installed CLI
+        shell: bash
+        run: |
+          mkdir -p smoke/site && echo hello > smoke/site/a.txt
+          cat > smoke/tessera.toml <<EOF
+          [general]
+          store = "smoke/state/t.db"
+          key_file = "smoke/state/seal.key"
+          [[watch]]
+          path = "smoke/site"
+          EOF
+          tessera keygen -c smoke/tessera.toml
+          tessera snapshot -c smoke/tessera.toml
+          tessera check -c smoke/tessera.toml --strict
+          echo changed > smoke/site/a.txt
+          set +e; tessera check -c smoke/tessera.toml -f json > smoke/report.json; code=$?; set -e
+          test "$code" = "1"
+          tessera verify --all --strict -c smoke/tessera.toml
