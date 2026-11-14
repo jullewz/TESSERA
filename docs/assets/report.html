@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Tessera &middot; Integrity check</title>
+<style>
+:root{--bg:#09090b;--panel:#111114;--panel2:#17171c;--line:#26262d;--text:#e4e4e7;
+--muted:#8b8b96;--accent:#a78bfa;--accent2:#c4b5fd;--glow:rgba(167,139,250,.14);
+--critical:#e11d74;--high:#fb7185;--medium:#fbbf24;--low:#7dd3fc;--info:#a1a1aa;
+--mono:"JetBrains Mono","Cascadia Code","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+--sans:Inter,"Segoe UI",system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,var(--glow),transparent 60%),var(--bg);
+color:var(--text);font:14px/1.55 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 28px 64px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+border-bottom:1px solid var(--line);padding-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px;font:600 13px var(--mono);letter-spacing:.18em;
+text-transform:uppercase;color:var(--accent2)}
+.mark{width:22px;height:22px;display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.mark i{border-radius:2px;background:var(--accent)}.mark i:nth-child(2){opacity:.55}
+.mark i:nth-child(3){opacity:.3}.mark i:nth-child(4){opacity:.8}
+h1{margin:10px 0 0;font-size:28px;font-weight:650;letter-spacing:-.02em}
+.meta{color:var(--muted);font:12px var(--mono);text-align:right;line-height:1.8}
+.meta b{color:var(--text);font-weight:500}
+.notes{margin:20px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.notes li{border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.06);color:#fde68a;
+border-radius:8px;padding:9px 14px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:26px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+cursor:pointer;transition:border-color .15s,transform .15s;user-select:none}
+.card:hover{border-color:#3a3a44;transform:translateY(-1px)}
+.card.off{opacity:.38}
+.card .n{font:600 26px var(--mono);letter-spacing:-.03em}
+.card .l{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.card.total .n{color:var(--accent2)}
+.toolbar{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+input[type=search]{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+color:var(--text);padding:11px 14px;font:13px var(--mono);outline:none;transition:border-color .15s}
+input[type=search]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.count{color:var(--muted);font:12px var(--mono);white-space:nowrap}
+.list{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+details{border-top:1px solid var(--line)}details:first-child{border-top:0}
+summary{display:grid;grid-template-columns:96px 96px 1fr;gap:14px;align-items:center;
+padding:12px 18px;cursor:pointer;list-style:none;transition:background .12s}
+summary::-webkit-details-marker{display:none}
+summary:hover{background:var(--panel2)}
+.sev{font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;
+border-radius:999px;justify-self:start;border:1px solid currentColor}
+.sev.critical{background:var(--critical);border-color:var(--critical);color:#fff}
+.sev.high{color:var(--high)}.sev.medium{color:var(--medium)}.sev.low{color:var(--low)}
+.sev.info{color:var(--info)}
+.kind{font:12px var(--mono);color:var(--accent)}
+.path{font:13px var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;
+text-align:left}
+.body{padding:4px 18px 16px 238px;font:12.5px var(--mono);color:var(--muted)}
+.body table{border-collapse:collapse}
+.body td{padding:3px 18px 3px 0;vertical-align:top}
+.body td:first-child{color:#6b6b76;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+.body .v{color:var(--text);word-break:break-all}
+.reason{color:var(--accent2)}.reason:before{content:"\25CF  ";color:var(--accent)}
+.empty{padding:56px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:#6ee7b7;font-size:18px;margin-bottom:6px}
+footer{margin-top:34px;color:#5d5d68;font:12px var(--mono);display:flex;justify-content:space-between;
+flex-wrap:wrap;gap:12px}
+footer a{color:var(--accent);text-decoration:none}
+@media (max-width:760px){summary{grid-template-columns:84px 1fr}.kind{display:none}
+.body{padding-left:18px}.meta{text-align:left}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body><div class=wrap>
+<header><div><div class=brand><span class=mark><i></i><i></i><i></i><i></i></span>tessera</div>
+<h1>Integrity check</h1></div><div class=meta>host <b>vm</b> &middot; linux<br>generated <b>2026-11-14T00:45:57+00:00</b><br>baseline <b>#1</b> &middot; 2026-11-14T00:45:57+00:00<br><b>13</b> entries &middot; 216 B hashed &middot; 2 ms</div></header>
+
+<div class=cards><div class="card total"><div class=n>6</div><div class=l>changes</div></div><div class=card data-sev="critical"><div class=n style="color:var(--critical)">3</div><div class=l>critical</div></div><div class=card data-sev="high"><div class=n style="color:var(--high)">2</div><div class=l>high</div></div><div class=card data-sev="medium"><div class=n style="color:var(--medium)">1</div><div class=l>medium</div></div><div class=card data-sev="low"><div class=n style="color:var(--low)">0</div><div class=l>low</div></div><div class=card data-sev="info"><div class=n style="color:var(--info)">0</div><div class=l>info</div></div></div>
+<div class=toolbar><input id=q type=search placeholder="Filter by path, change or reason" autocomplete=off spellcheck=false><span class=count id=count></span></div><div class=list><details data-sev="critical" data-text="/srv/etc/nginx.conf modified content changed but modification time preserved (possible timestomping)" open><summary><span class="sev critical">critical</span><span class=kind>modified</span><span class=path title="/srv/etc/nginx.conf"><bdi>/srv/etc/nginx.conf</bdi></span></summary><div class=body><table><tr><td>content</td><td class=v>sha256:43f15f4ef53f7b60 → sha256:8c5a5ed45fdf7433</td></tr><tr><td>size</td><td class=v>23 B → 47 B</td></tr></table><div class=reason>content changed but modification time preserved (possible timestomping)</div></div></details><details data-sev="critical" data-text="/srv/etc/passwd modified security-sensitive file" open><summary><span class="sev critical">critical</span><span class=kind>modified</span><span class=path title="/srv/etc/passwd"><bdi>/srv/etc/passwd</bdi></span></summary><div class=body><table><tr><td>content</td><td class=v>sha256:e787b373a74594b3 → sha256:dea478a63d8de124</td></tr><tr><td>size</td><td class=v>32 B → 63 B</td></tr><tr><td>mtime</td><td class=v>2026-11-14 00:45:57.048Z → 2026-11-14 00:45:57.060Z</td></tr><tr><td>rule</td><td class=v>**/etc/passwd</td></tr></table><div class=reason>security-sensitive file</div></div></details><details data-sev="critical" data-text="/srv/usr/bin/backup metadata setuid bit set on file" open><summary><span class="sev critical">critical</span><span class=kind>metadata</span><span class=path title="/srv/usr/bin/backup"><bdi>/srv/usr/bin/backup</bdi></span></summary><div class=body><table><tr><td>mode</td><td class=v>rwxr-xr-x (0755) → rwsr-xr-x (4755)</td></tr><tr><td>rule</td><td class=v>**/usr/bin/**</td></tr></table><div class=reason>setuid bit set on file</div></div></details><details data-sev="high" data-text="/srv/etc/cron.d/0update added persistence location (autostart, scheduler or service)"><summary><span class="sev high">high</span><span class=kind>added</span><span class=path title="/srv/etc/cron.d/0update"><bdi>/srv/etc/cron.d/0update</bdi></span></summary><div class=body><table></table><div class=reason>persistence location (autostart, scheduler or service)</div></div></details><details data-sev="high" data-text="/srv/var/log/auth.log modified append-only file shrank (possible log tampering)"><summary><span class="sev high">high</span><span class=kind>modified</span><span class=path title="/srv/var/log/auth.log"><bdi>/srv/var/log/auth.log</bdi></span></summary><div class=body><table><tr><td>size</td><td class=v>4,390 B → 7 B</td></tr><tr><td>rule</td><td class=v>**/*.log</td></tr></table><div class=reason>append-only file shrank (possible log tampering)</div></div></details><details data-sev="medium" data-text="/srv/etc/motd.orig moved "><summary><span class="sev medium">medium</span><span class=kind>moved</span><span class=path title="/srv/etc/motd.orig"><bdi>/srv/etc/motd.orig</bdi></span></summary><div class=body><table><tr><td>from</td><td class=v>/srv/etc/motd</td></tr></table></div></details></div>
+<footer><span>tessera 0.1.0 &middot; tamper-evident integrity monitoring</span>
+<span>Created by <a href="https://github.com/jullewz">jullewz</a> &middot;
+<a href="https://github.com/jullewz/tessera">source</a></span></footer>
+</div><script>
+(()=>{const cards=[...document.querySelectorAll('.card[data-sev]')];
+const rows=[...document.querySelectorAll('details[data-sev]')];
+const q=document.getElementById('q');const count=document.getElementById('count');
+const off=new Set();
+function apply(){const t=(q.value||'').toLowerCase();let shown=0;
+rows.forEach(r=>{const ok=!off.has(r.dataset.sev)&&r.dataset.text.includes(t);
+r.style.display=ok?'':'none';if(ok)shown++;});
+if(count)count.textContent=shown+' of '+rows.length+' shown';}
+cards.forEach(c=>c.addEventListener('click',()=>{const s=c.dataset.sev;
+off.has(s)?off.delete(s):off.add(s);c.classList.toggle('off');apply();}));
+if(q)q.addEventListener('input',apply);apply();})();
+</script></body></html>

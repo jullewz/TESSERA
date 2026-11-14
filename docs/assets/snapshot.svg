@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="819" height="218" viewBox="0 0 819 218" role="img" aria-label="tessera snapshot">
+<style>text{font:13.5px 'JetBrains Mono','Cascadia Code',Menlo,Consolas,monospace;white-space:pre}</style>
+<rect width="819" height="218" rx="12" fill="#0b0b0f" stroke="#26262d"/>
+<rect width="819" height="34" rx="12" fill="#141419"/>
+<rect y="22" width="819" height="12" fill="#141419"/>
+<circle cx="20" cy="17" r="5.5" fill="#3f3f46"/><circle cx="38" cy="17" r="5.5" fill="#3f3f46"/><circle cx="56" cy="17" r="5.5" fill="#3f3f46"/>
+<text x="409.5" y="21.5" fill="#71717a" text-anchor="middle">tessera snapshot</text>
+<text y="69" xml:space="preserve"><tspan x="22.0" fill="#71717a">── </tspan><tspan x="47.3" fill="#c4b5fd" font-weight="700">baseline #1 recorded</tspan><tspan x="215.9" fill="#d4d4d8"> </tspan><tspan x="224.3" fill="#71717a">────────────────────────────────────────────────────────────────────</tspan></text>
+<text y="89" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">entries    </tspan><tspan x="131.6" fill="#d4d4d8">  12  (5 files, 7 dirs, 0 links)</tspan></text>
+<text y="109" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">hashed     </tspan><tspan x="131.6" fill="#d4d4d8">  4 files, 111 B (sha256)</tspan></text>
+<text y="129" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">duration   </tspan><tspan x="131.6" fill="#d4d4d8">  3 ms</tspan></text>
+<text y="149" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">merkle root</tspan><tspan x="131.6" fill="#d4d4d8">  </tspan><tspan x="148.4" fill="#a78bfa">bd8cf164df6a837f199894c3edfc04dcb777876e87c2b2ab76936878e4a13c01</tspan></text>
+<text y="169" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">seal       </tspan><tspan x="131.6" fill="#d4d4d8">  </tspan><tspan x="148.4" fill="#34d399">✓ valid</tspan></text>
+<text y="189" xml:space="preserve"><tspan x="22.0" fill="#d4d4d8">  </tspan><tspan x="38.9" fill="#71717a">store      </tspan><tspan x="131.6" fill="#d4d4d8">  /state/tessera.db</tspan></text>
+</svg>
